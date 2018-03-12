@@ -9,6 +9,7 @@ output: html_document
 
 ```{r, echo=FALSE}
 library(tidyverse)
+library(ggthemes)
 ```
 
 ```{r}
@@ -36,4 +37,62 @@ ggplot(mpg,aes(x=displ,y=hwy,label=seq(nrow(mpg)))) +
   geom_text() +
   theme_classic()
 ```
+try some facets
+```{r}
+ggplot(mpg,aes(x=displ,y=hwy,color= class)) +
+  geom_point() +
+  facet_wrap( ~ year) +
+  theme_classic()
 
+```
+Try some boxplots
+```{r}
+ggplot(mpg,aes(x=year,y=hwy,group=year)) +
+  geom_boxplot() +
+  facet_grid( ~ class) +
+  theme_classic()
+
+```
+Do some regression lines 
+```{r}
+ggplot(mpg,aes(x=displ,y=hwy,group=year)) +
+  geom_point() +
+  geom_smooth() +
+  #facet_grid( ~ class) +
+  theme_classic()
+
+```
+other geometries
+```{r}
+ggplot(mpg,aes(x=drv,y=hwy)) +
+  geom_violin() +
+  #facet_grid( ~ class) +
+  theme_classic()
+
+```
+
+change some labels
+```{r}
+ggplot(mpg,aes(x=displ,y=hwy)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title="Displacement v highway mileage",x="Engine Size",y="Miles per Gallon") +
+  theme_classic()
+
+```
+
+Set a general theme
+```{r} 
+mytheme <- theme_classic() + 
+  theme(text=element_text(size=16))
+ggplot(mpg,aes(x=displ,y=hwy)) +
+  geom_point() +
+  mytheme
+```
+Do some Barplots
+
+```{r}
+ggplot(mpg,aes(x=fl,fill=class)) +
+  geom_bar(position="dodge") +
+  mytheme
+```
