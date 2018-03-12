@@ -16,8 +16,24 @@ mpg
 ```
 ```{r}
 myplot <- ggplot(data=mpg, mapping=aes(x=displ,y=hwy)) +
-geom_point()  + 
+geom_point(alpha=0.4)  + 
 theme_classic()
 myplot
 
 ```
+```{r}
+ggplot(mpg,aes(x=displ,y=hwy,color=class)) + geom_point() +
+  theme_classic()
+```
+
+```{r}
+ggplot(mpg,aes(x=hwy,y=cty,size=class,color=fl)) + geom_point() +
+  theme_classic()
+```
+
+```{r}
+ggplot(mpg,aes(x=displ,y=hwy,label=seq(nrow(mpg)))) +
+  geom_text() +
+  theme_classic()
+```
+
