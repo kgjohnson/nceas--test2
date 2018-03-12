@@ -96,3 +96,12 @@ ggplot(mpg,aes(x=fl,fill=class)) +
   geom_bar(position="dodge") +
   mytheme
 ```
+
+Export some plots
+
+```{r}
+myplot <- ggplot(mpg,aes(x=fl,fill=class)) +
+  geom_bar(position="fill") +
+  mytheme
+ggsave("barplot.pdf",plot=myplot,device="pdf",height=10,width=10,units="cm")
+```
