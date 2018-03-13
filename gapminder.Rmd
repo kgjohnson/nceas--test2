@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r}
 library(tidyverse, echo=FALSE)
+
 ```
 Read some data.
 ```{r}
@@ -53,3 +54,57 @@ Change some columns
 mutate(gapminder, totalGdp= pop * gdpPercap) %>%
   arrange(desc(totalGdp))
 ```
+Try analysis on  groups
+
+```{r}
+gapminder %>%
+  group_by(country) %>%
+  mutate(gdp= gdpPercap*pop,max_gdp=max(gdp)) %>%
+  ungroup() %>%
+  filter(gdp==max_gdp)
+```
+
+summary data by continent
+```{r}
+gapminder %>% 
+  group_by(continent) %>%
+  mutate(gdp= gdpPercap*pop) %>%
+  summarise(max_gdp=max(gdp),min_gdp=min(gdp))
+```
+joining tables
+```{r}
+co2 <- readr::read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/co2.csv")
+co2 %>% head()
+co2 %>% dim() # 12
+
+```
+join save 
+```{r}
+gap_2007 <- gapminder %>%
+  filter(year== 2007)
+inner_join(gap_2007,co2,by="country") #%>%
+  #filter(is.na(co2_2007))
+
+```
+
+#Tidyr
+Normalising table 
+```{r}
+gap_wide <- readr::read_csv("https://raw.githubusercontent.com/OHI-Science/data-science-training/master/data/gapminder_wide.csv")
+```
+
+```{r}
+gap_better <- gap_wide %>% 
+  gather(observation,observ_value,-continent,-country) %>%
+  separate(observation,into= c("obs_type","year"), sep="_",convert=TRUE)
+```
+try the spread function 
+```{r}
+unique(gap_better$obs_type)
+```
+```{r}
+gap_better %>%
+  spread(obs_type,observ_value)
+```
+
+
