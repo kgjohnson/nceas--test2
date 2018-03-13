@@ -1,0 +1,25 @@
+---
+title: "gapminder"
+author: "Ken"
+date: "3/13/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(tidyverse, echo=FALSE)
+```
+Read some data.
+```{r}
+gapminder <- read.csv("https://raw.githubusercontent.com/jules32/2017-11-30-MBARI/gh-pages/data/gapminder.csv")
+```
+Show the first few rows or the last few rows and the structure of the dataset 
+```{r}
+head(gapminder)
+tail(gapminder)
+str(gapminder)
+```
+
