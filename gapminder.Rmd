@@ -23,3 +23,33 @@ tail(gapminder)
 str(gapminder)
 ```
 
+Look at some summaries to help clean data
+```{r}
+#install.packages("skimr)
+library(skimr)
+skim(gapminder)
+```
+extract and filter data
+```{r}
+filter(gapminder, country=="Switzerland" )
+#same as
+gapminder[gapminder$country=="Switzerland",]
+filter(gapminder,lifeExp < 25)
+filter(gapminder, lifeExp==max(lifeExp))
+```
+mess with columns
+```{r}
+dplyr::select(gapminder, country, year, pop)
+gapminder_no_cont <- dplyr::select(gapminder, -continent)
+filter(gapminder_no_cont,year==2007)
+```
+Mess with pipes - this is only in tidyverse not base R
+
+```{r}
+dplyr::select(gapminder, -continent) %>%  filter(year==2007)
+```
+Change some columns
+```{r}
+mutate(gapminder, totalGdp= pop * gdpPercap) %>%
+  arrange(desc(totalGdp))
+```
