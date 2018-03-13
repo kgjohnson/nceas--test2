@@ -1,0 +1,113 @@
+---
+title: "tidy_coral_analysis"
+author: "Ken"
+date: "3/13/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## libraries
+library(tidyverse)
+library(janitor) # install.packages('janitor')
+library(skimr) # install.packages('skimr')
+library(stringr) # added when we needed it for benthic data
+
+## data filepaths/urls ----
+
+## benthic data
+benthic_url <- 'https://www.nodc.noaa.gov/archive/arc0054/0104255/1.1/data/0-data/cd08/100308OaAla03m.CSV'
+
+## buoy data
+buoy_url <- 'http://www.ndbc.noaa.gov/view_text_file.php?filename=mokh1h2010.txt.gz&dir=data/historical/stdmet/'
+```
+
+#Benthic Data
+
+```{r}
+benthic_raw <- read_csv(benthic_url)
+head(benthic_raw) 
+```
+Clean the data
+```{r}
+## the `janitor` package's `clean_names` function
+benthic <- benthic_raw %>%
+  janitor::clean_names()
+
+names(benthic)
+```
+
+```{r}
+benthic <- benthic %>%
+  select(id_name, point, x, y, id_date)
+
+head(benthic)
+```
+
+
+```{r}
+benthic <- benthic %>%
+  mutate(date = stringr::str_remove_all(id_date, "#"))
+```
+
+```{r}
+skim(benthic)
+```
+
+make a plot
+
+```{r}
+ggplot(benthic, aes(date, fill = id_name)) +
+         geom_bar()
+```
+
+```{r}
+buoy_raw <- readr::read_table2(buoy_url)
+head(buoy_raw) # hmm this doesn't look right! Why not?
+buoy <- buoy_raw
+
+```
+
+```{r}
+names(buoy) <- str_c(names(buoy),                  ## current header
+                  buoy %>% filter(`#YY` == "#yr"), ## row1 -- don't say buoy[1,]
+                  sep = "_")                       ## separate by `_`
+head(buoy)
+```
+
+```{r}
+names(buoy) <- str_replace_all(names(buoy), "#", "")  # replace `#` with nothing
+names(buoy) <- str_replace_all(names(buoy), "/", "_") # replace `/` with `_`
+```
+
+```{r}
+buoy <- buoy %>%
+  filter(YY_yr != "#yr")
+```
+
+```{r}
+ggplot(buoy, aes(WTMP_degC)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90))
+```
+
+```{r}
+buoy <- buoy %>% mutate(WTMP_degC=as.numeric(str_replace_all(WTMP_degC,"999","")))
+```
+
+```{r}
+buoy <- buoy %>%
+  unite(date, c(YY_yr, MM_mo, DD_dy), sep = "-")
+
+head(buoy)
+```
+
+Join the benthic and buoy data
+```{r}
+bb_join <- benthic %>%
+  left_join(buoy, by = "date")
+```
+
