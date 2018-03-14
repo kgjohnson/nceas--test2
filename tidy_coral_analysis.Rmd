@@ -111,3 +111,37 @@ bb_join <- benthic %>%
   left_join(buoy, by = "date")
 ```
 
+```{r}
+bb_join %>% select(id_name,x,y,date,hh_hr,mm_mn,WTMP_degC) %>%
+  head()
+```
+
+but only use average for each data
+```{r}
+mean_temp <- buoy %>% 
+  filter(WTMP_degC >0) %>% #remove zeros
+  group_by(date) %>% 
+  mutate(WTMP_degC=as.numeric(WTMP_degC)) %>%
+  summarize(meanTemp=mean(WTMP_degC)) %>%
+  ungroup()
+```
+
+```{r}
+bb_join <- benthic %>%
+  left_join(mean_temp, by = "date") %>% 
+  select(id_name,x,y,date,meanTemp)
+  head(bb_join)
+```
+
+```{r}
+bb_join %>%
+ggplot(aes(x=displ,y=hwy)) +
+  geom_point() +
+  geom_smooth() +
+  labs(title="Displacement v highway mileage",x="Engine Size",y="Miles per Gallon") +
+  theme_classic()
+
+```
+
+```
+
